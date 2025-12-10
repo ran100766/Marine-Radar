@@ -26,6 +26,7 @@ import com.example.gps_compas.askUserName
 import com.example.gps_compas.showCompasArrow
 import com.example.gps_compas.showPointsOnCompas
 import com.example.gps_compas.showPointsOnList
+import com.example.gps_compas.ShowWind
 import com.example.gps_compas.updateVisibleLines
 import kotlinx.coroutines.*
 
@@ -128,6 +129,8 @@ class MainActivity : AppCompatActivity() {
 
             showCompasArrow(this, fullLocationsList, smoothedAzimuth, tvDirection)
             showPointsOnCompas(this, fullLocationsList, smoothedAzimuth)
+            showWind(azimuth)
+
         }
 
 
@@ -208,8 +211,6 @@ class MainActivity : AppCompatActivity() {
 //        showCompasArrow(this, fullLocationsList, location)
 //        showPointsOnCompas(this,fullLocationsList, location)
         showPointsOnList(this, fullLocationsList)
-
-
     }
 
     override fun onStart() {
@@ -253,5 +254,26 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
+    }
+
+    private fun showWind(direction: Float)
+    {
+        val windIcon = findViewById<ImageView>(R.id.windPointer)
+        val compassView = findViewById<ImageView>(R.id.compassCircle)
+
+        compassView.post {
+            val centerX = compassView.x + compassView.width / 2
+            val centerY = compassView.y + compassView.height / 2
+            val radius = compassView.width / 2f - 40f  // padding from edge
+
+            ShowWind.placeWindIcon(
+                windIcon,
+                centerX,
+                centerY,
+                radius,
+                direction
+            )
+        }
+
     }
 }
