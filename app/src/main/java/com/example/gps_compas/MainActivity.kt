@@ -12,6 +12,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
 import android.provider.Settings
+import android.view.MotionEvent
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.ImageView
@@ -104,6 +105,7 @@ class MainActivity : AppCompatActivity() {
     var smoothedAzimuth = 0f
     val smoothingFactor = 0.1f  // smaller = smoother
 
+    var windDirection = 0f
 
     fun smoothAzimuth(oldAzimuth: Float, newAzimuth: Float): Float {
         var delta = newAzimuth - oldAzimuth
@@ -118,18 +120,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main) // must match activity_main.xml
 
-        val arrowImage = findViewById<ImageView>(R.id.compassCircle)
-        arrowImage.setImageResource(R.drawable.circle)
+
+        val compassCircle = findViewById<ImageView>(R.id.compassCircle)
+        compassCircle.setImageResource(R.drawable.circle)
+
+        getWindPress(compassCircle)
 
         compassManager = CompassManager(this) { azimuth ->
             smoothedAzimuth = smoothAzimuth(smoothedAzimuth, azimuth)
 
             showCompasArrow(this, fullLocationsList, smoothedAzimuth, tvDirection)
             showPointsOnCompas(this, fullLocationsList, smoothedAzimuth)
-            showWind(azimuth)
+            showWind(windDirection, smoothedAzimuth)
 
         }
 
@@ -256,10 +262,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun showWind(direction: Float)
+    private fun showWind(windDirection: Float, azimuth: Float)
     {
         val windIcon = findViewById<ImageView>(R.id.windPointer)
         val compassView = findViewById<ImageView>(R.id.compassCircle)
+
+        var direction = (windDirection - azimuth + 360) % 360
 
         compassView.post {
             val centerX = compassView.x + compassView.width / 2
@@ -276,4 +284,37 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
+
+    private fun getWindPress(compassCircle : ImageView) {
+
+        compassCircle.setOnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+
+                val cx = v.width / 2f
+                val cy = v.height / 2f
+
+                // where the user pressed
+                val dx = event.x - cx
+                val dy = event.y - cy
+
+                // distance from center
+                val distance = kotlin.math.sqrt(dx * dx + dy * dy)
+
+                // tap is considered "center" if within 80 pixels
+                if (distance < 80f) {
+                    // SAVE THE CURRENT COMPASS DIRECTION
+                    windDirection = smoothedAzimuth
+
+                    Toast.makeText(this, "Direction saved: $smoothedAzimuth°", Toast.LENGTH_SHORT).show()
+                    return@setOnTouchListener true
+                }
+            }
+
+            false
+        }
+
+    }
+
 }
+
