@@ -142,7 +142,14 @@ class MainActivity : AppCompatActivity() {
 
             showCompasArrow(this, fullLocationsList, smoothedAzimuth, tvDirection)
             showPointsOnCompas(this, fullLocationsList, smoothedAzimuth)
-            showWind(windDirection, smoothedAzimuth)
+
+            ShowWind.showWind(
+                windDirection,
+                azimuth,
+                findViewById(R.id.windPointerContainer),
+                findViewById(R.id.windPointerText),
+                findViewById(R.id.compassCircle)
+            )
 
         }
 
@@ -271,53 +278,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    private fun showWind(windDirection: Float, azimuth: Float) {
-
-
-        val pointerContainer = findViewById<FrameLayout>(R.id.windPointerContainer)
-        val windText = findViewById<TextView>(R.id.windPointerText)
-        val compassView = findViewById<ImageView>(R.id.compassCircle)
-
-        // If no wind direction, reset pointer to center
-        if (windDirection < 0) {
-            compassView.post {
-                val centerX = compassView.x + compassView.width / 2
-                val centerY = compassView.y + compassView.height / 2
-
-                ShowWind.placeWindIcon(
-                    pointerContainer,
-                    centerX,
-                    centerY,
-                    0f,   // radius = 0 → pointer in the center
-                    0f    // angle doesn't matter
-                )
-            }
-            windText.text = "" // remove text
-            return
-        }
-
-        var direction = (windDirection - azimuth + 360) % 360
-        val angleToWind = if (direction > 180) 360 - direction else direction
-        windText.text = "${angleToWind.toInt()}°"
-
-        compassView.post {
-            val centerX = compassView.x + compassView.width / 2
-            val centerY = compassView.y + compassView.height / 2
-            val radius = compassView.width / 2f - 40f
-
-            ShowWind.placeWindIcon(
-                pointerContainer,   // << move the whole container
-                centerX,
-                centerY,
-                radius,
-                direction
-            )
-        }
-
-        if (angleToWind > 170f) BeepManager.beepSeries()
-        if (angleToWind < 10f) BeepManager.beepSeries()
-    }
-
     private var windActive = true  // global or class-level variable
 
     private fun getWindPress(compassCircle: ImageView) {

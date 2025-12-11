@@ -4,7 +4,8 @@ import android.view.View
 import android.widget.ImageView
 import kotlin.math.cos
 import kotlin.math.sin
-
+import android.widget.FrameLayout
+import android.widget.TextView
 object ShowWind {
 
     /**
@@ -23,6 +24,55 @@ object ShowWind {
 
         view.x = x.toFloat() - view.width / 2
         view.y = y.toFloat() - view.height / 2
+    }
+
+    fun showWind(
+        windDirection: Float,
+        azimuth: Float,
+        pointerContainer: FrameLayout,
+        windText: TextView,
+        compassView: ImageView
+    ) {
+
+        // If no wind direction, reset pointer to center
+        if (windDirection < 0) {
+            compassView.post {
+                val centerX = compassView.x + compassView.width / 2
+                val centerY = compassView.y + compassView.height / 2
+
+                ShowWind.placeWindIcon(
+                    pointerContainer,
+                    centerX,
+                    centerY,
+                    0f,
+                    0f
+                )
+            }
+            windText.text = ""
+            return
+        }
+
+        val direction = (windDirection - azimuth + 360) % 360
+        val angleToWind = if (direction > 180) 360 - direction else direction
+        windText.text = "${angleToWind.toInt()}°"
+
+        compassView.post {
+            val centerX = compassView.x + compassView.width / 2
+            val centerY = compassView.y + compassView.height / 2
+            val radius = compassView.width / 2f - 40f
+
+            ShowWind.placeWindIcon(
+                pointerContainer,
+                centerX,
+                centerY,
+                radius,
+                direction
+            )
+        }
+
+        if (angleToWind > 170f || angleToWind < 10f) {
+            BeepManager.beepSeries()
+        }
     }
 
 }
