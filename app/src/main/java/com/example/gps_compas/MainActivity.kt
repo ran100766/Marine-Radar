@@ -273,11 +273,28 @@ class MainActivity : AppCompatActivity() {
     }
     private fun showWind(windDirection: Float, azimuth: Float) {
 
-        if (windDirection < 0) return
 
         val pointerContainer = findViewById<FrameLayout>(R.id.windPointerContainer)
         val windText = findViewById<TextView>(R.id.windPointerText)
         val compassView = findViewById<ImageView>(R.id.compassCircle)
+
+        // If no wind direction, reset pointer to center
+        if (windDirection < 0) {
+            compassView.post {
+                val centerX = compassView.x + compassView.width / 2
+                val centerY = compassView.y + compassView.height / 2
+
+                ShowWind.placeWindIcon(
+                    pointerContainer,
+                    centerX,
+                    centerY,
+                    0f,   // radius = 0 → pointer in the center
+                    0f    // angle doesn't matter
+                )
+            }
+            windText.text = "" // remove text
+            return
+        }
 
         var direction = (windDirection - azimuth + 360) % 360
         val angleToWind = if (direction > 180) 360 - direction else direction
@@ -301,35 +318,41 @@ class MainActivity : AppCompatActivity() {
         if (angleToWind < 10f) BeepManager.beepSeries()
     }
 
+    private var windActive = true  // global or class-level variable
 
-    private fun getWindPress(compassCircle : ImageView) {
+    private fun getWindPress(compassCircle: ImageView) {
 
         compassCircle.setOnTouchListener { v, event ->
+
             if (event.action == MotionEvent.ACTION_DOWN) {
 
+                if (!windActive) {
+                    windDirection = -1f
+                    // Skip this press
+                    windActive = true  // flip for next press
+                    return@setOnTouchListener true
+                }
+
+                // Calculate tap distance from center
                 val cx = v.width / 2f
                 val cy = v.height / 2f
-
-                // where the user pressed
                 val dx = event.x - cx
                 val dy = event.y - cy
-
-                // distance from center
                 val distance = kotlin.math.sqrt(dx * dx + dy * dy)
 
-                // tap is considered "center" if within 80 pixels
                 if (distance < 80f) {
                     // SAVE THE CURRENT COMPASS DIRECTION
                     windDirection = smoothedAzimuth
 
                     Toast.makeText(this, "Direction saved: $smoothedAzimuth°", Toast.LENGTH_SHORT).show()
+
+                    windActive = false  // next press will skip
                     return@setOnTouchListener true
                 }
             }
 
             false
         }
-
     }
 
 }
