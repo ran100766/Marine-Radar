@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity() {
     var smoothedAzimuth = 0f
     val smoothingFactor = 0.1f  // smaller = smoother
 
-    var windDirection = 0f
+    var windDirection = -1f
 
     fun smoothAzimuth(oldAzimuth: Float, newAzimuth: Float): Float {
         var delta = newAzimuth - oldAzimuth
@@ -270,6 +270,8 @@ class MainActivity : AppCompatActivity() {
     }
     private fun showWind(windDirection: Float, azimuth: Float) {
 
+        if (windDirection < 0) return
+
         val pointerContainer = findViewById<FrameLayout>(R.id.windPointerContainer)
         val windText = findViewById<TextView>(R.id.windPointerText)
         val compassView = findViewById<ImageView>(R.id.compassCircle)
@@ -292,7 +294,7 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        if (angleToWind > 170f && angleToWind < 180f) BeepManager.beepSeries()
+        if (angleToWind > 170f) BeepManager.beepSeries()
         if (angleToWind < 10f) BeepManager.beepSeries()
     }
 
