@@ -13,6 +13,7 @@ import android.os.Looper
 import android.os.PowerManager
 import android.provider.Settings
 import android.view.MotionEvent
+import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.ImageView
@@ -261,28 +262,29 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+    private fun showWind(windDirection: Float, azimuth: Float) {
 
-    private fun showWind(windDirection: Float, azimuth: Float)
-    {
-        val windIcon = findViewById<ImageView>(R.id.windPointer)
+        val pointerContainer = findViewById<FrameLayout>(R.id.windPointerContainer)
+        val windText = findViewById<TextView>(R.id.windPointerText)
         val compassView = findViewById<ImageView>(R.id.compassCircle)
 
         var direction = (windDirection - azimuth + 360) % 360
+        val angleToWind = if (direction > 180) 360 - direction else direction
+        windText.text = "${angleToWind.toInt()}°"
 
         compassView.post {
             val centerX = compassView.x + compassView.width / 2
             val centerY = compassView.y + compassView.height / 2
-            val radius = compassView.width / 2f - 40f  // padding from edge
+            val radius = compassView.width / 2f - 40f
 
             ShowWind.placeWindIcon(
-                windIcon,
+                pointerContainer,   // << move the whole container
                 centerX,
                 centerY,
                 radius,
                 direction
             )
         }
-
     }
 
 

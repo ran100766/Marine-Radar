@@ -1,5 +1,6 @@
 package com.example.gps_compas
 
+import android.view.View
 import android.widget.ImageView
 import kotlin.math.cos
 import kotlin.math.sin
@@ -15,19 +16,13 @@ object ShowWind {
      * @param radius Distance from center where icon should be placed
      * @param directionDeg Wind direction in degrees (0 = North, 90 = East, etc.)
      */
-    fun placeWindIcon(
-        windIcon: ImageView,
-        compassCenterX: Float,
-        compassCenterY: Float,
-        radius: Float,
-        directionDeg: Float
-    ) {
-        val angleRad = Math.toRadians(directionDeg.toDouble())
+    fun placeWindIcon(view: View, centerX: Float, centerY: Float, radius: Float, direction: Float) {
+        val angleRad = Math.toRadians(direction - 90.0)
+        val x = centerX + radius * cos(angleRad)
+        val y = centerY + radius * sin(angleRad)
 
-        val x = (compassCenterX + radius * sin(angleRad)).toFloat()
-        val y = (compassCenterY - radius * cos(angleRad)).toFloat()
-
-        windIcon.x = x - windIcon.width / 2
-        windIcon.y = y - windIcon.height / 2
+        view.x = x.toFloat() - view.width / 2
+        view.y = y.toFloat() - view.height / 2
     }
+
 }
