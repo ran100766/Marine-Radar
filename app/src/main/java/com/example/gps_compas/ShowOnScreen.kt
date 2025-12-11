@@ -29,7 +29,7 @@ fun showCompasArrow(
     val normalizedAzimuth = (displayAzimuth + 360) % 360
 
     // Update direction text
-    tvDirection.text = "Direction: %.0f°".format(normalizedAzimuth)
+    tvDirection.text = "Course: %.0f°".format(normalizedAzimuth)
 
     if (arrowStatic) {
         val arrow = activity.findViewById<ImageView>(R.id.directionArrow)

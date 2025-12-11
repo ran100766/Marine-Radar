@@ -154,19 +154,22 @@ class MainActivity : AppCompatActivity() {
 
         FirebaseApp.initializeApp(this)
 
+        if (false)
+        {
 // Save name
-        val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
-        prefs.edit().putString("userName", userName).apply()
+            val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+            prefs.edit().putString("userName", userName).apply()
 
 // Load name in onCreate
-        val savedName = prefs.getString("userName", null)
-        if (savedName == null || savedName == noName) {
-            askUserName(this) { name ->
-                userName = name
-                prefs.edit().putString("userName", name).apply()
+            val savedName = prefs.getString("userName", null)
+            if (savedName == null || savedName == noName) {
+                askUserName(this) { name ->
+                    userName = name
+                    prefs.edit().putString("userName", name).apply()
+                }
+            } else {
+                userName = savedName
             }
-        } else {
-            userName = savedName
         }
 
         locationPermissionRequest.launch(locationPermissions)
