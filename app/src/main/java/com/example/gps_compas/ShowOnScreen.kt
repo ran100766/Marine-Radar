@@ -10,8 +10,9 @@ import android.widget.TextView
 import com.example.gpscompass.MainActivity
 import com.example.gpscompass.MainActivity.NavigationResult
 import com.example.gpscompass.R
+import com.example.i_radar.formatDistance
 
-    private val visibleLines = mutableListOf<String>() // 👈 store currently visible lines
+private val visibleLines = mutableListOf<String>() // 👈 store currently visible lines
 
     private var currentDegree = 0f  // <-- declare here
 
@@ -119,7 +120,7 @@ fun showPointsOnCompas(
 
             // Fixed-width columns
             val text =
-                String.format("%-14s %-7d", point.point.name.take(14), point.distance.toInt())
+                String.format("%-14s %-7s", point.point.name.take(14), formatDistance(point.distance.toInt()))
             tv.text = text
             tv.typeface = Typeface.MONOSPACE // ensures columns align
 

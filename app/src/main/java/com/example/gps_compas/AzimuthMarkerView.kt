@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
+import com.example.i_radar.formatDistance
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -67,7 +68,7 @@ class AzimuthMarkerView @JvmOverloads constructor(
             paint.textAlign = Paint.Align.CENTER
             paint.textSize = 40f  // adjust size as needed
 
-            val distanceText = String.format("%d m", m.distance) // example: "49.8 m"
+            val distanceText = String.format("%s", formatDistance(m.distance)) // example: "49.8 m"
             canvas.drawText(distanceText, x, y + (paint.textSize / 3), paint)
 
             index++
