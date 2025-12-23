@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
+import com.example.gpscompass.MainActivity
 import com.example.gpscompass.MainActivity.NavigationResult
 import com.example.gpscompass.R
 
@@ -29,7 +30,15 @@ fun showCompasArrow(
     val normalizedAzimuth = (displayAzimuth + 360) % 360
 
     // Update direction text
-    tvDirection.text = "Course: %.0f°".format(normalizedAzimuth)
+//    tvDirection.text = "Course: %.0f°".format(normalizedAzimuth)
+
+    if (MainActivity.windNoneActive) {
+        tvDirection.text = "Course: %.0f°".format(normalizedAzimuth)
+    } else {
+        tvDirection.text = "Course: %.0f° Wind: %.0f°".format(normalizedAzimuth, MainActivity.angleToWind)
+    }
+
+
 
     if (arrowStatic) {
         val arrow = activity.findViewById<ImageView>(R.id.directionArrow)

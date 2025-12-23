@@ -6,6 +6,9 @@ import kotlin.math.cos
 import kotlin.math.sin
 import android.widget.FrameLayout
 import android.widget.TextView
+import com.example.gpscompass.MainActivity
+import com.example.gpscompass.MainActivity.Companion.angleToWind
+
 object ShowWind {
 
     /**
@@ -53,7 +56,7 @@ object ShowWind {
         }
 
         val direction = (windDirection - azimuth + 360) % 360
-        val angleToWind = if (direction > 180) 360 - direction else direction
+        angleToWind = if (direction > 180) 360 - direction else direction
         windText.text = "${angleToWind.toInt()}°"
 
         compassView.post {

@@ -2,7 +2,6 @@ package com.example.gpscompass
 
 import CompassManager
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Build
@@ -31,6 +30,10 @@ class MainActivity : AppCompatActivity() {
     companion object {
         val noName = "No_Name"
         var userName: String = noName
+        var windDirection = -1f
+        var angleToWind = -1f
+
+        var windNoneActive = true  // global or class-level variable
     }
 
     private lateinit var compassManager: CompassManager
@@ -42,6 +45,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvLatitude: TextView
     private lateinit var tvLongitude: TextView
     private val uiUpdateHandler = Handler(Looper.getMainLooper())
+
+
 
     private val uiUpdateRunnable = object : Runnable {
         override fun run() {
@@ -110,7 +115,6 @@ class MainActivity : AppCompatActivity() {
     var smoothedAzimuth = 0f
     val smoothingFactor = 0.1f  // smaller = smoother
 
-    var windDirection = -1f
 
     fun smoothAzimuth(oldAzimuth: Float, newAzimuth: Float): Float {
         var delta = newAzimuth - oldAzimuth
@@ -247,7 +251,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private var windActive = true  // global or class-level variable
 
     private fun getWindPress(compassCircle: ImageView) {
 
@@ -255,10 +258,10 @@ class MainActivity : AppCompatActivity() {
 
             if (event.action == MotionEvent.ACTION_DOWN) {
 
-                if (!windActive) {
+                if (!windNoneActive) {
                     windDirection = -1f
                     // Skip this press
-                    windActive = true  // flip for next press
+                    windNoneActive = true  // flip for next press
                     return@setOnTouchListener true
                 }
 
@@ -275,7 +278,7 @@ class MainActivity : AppCompatActivity() {
 
                     Toast.makeText(this, "Direction saved: $smoothedAzimuth°", Toast.LENGTH_SHORT).show()
 
-                    windActive = false  // next press will skip
+                    windNoneActive = false  // next press will skip
                     return@setOnTouchListener true
                 }
             }
