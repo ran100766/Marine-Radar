@@ -5,11 +5,6 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.location.Location
-import android.media.AudioAttributes
-import android.media.AudioManager
-import android.media.MediaPlayer
-import android.media.SoundPool
-import android.media.ToneGenerator
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -18,7 +13,6 @@ import android.os.Looper
 import android.os.PowerManager
 import android.provider.Settings
 import android.view.MotionEvent
-import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.ImageView
@@ -27,7 +21,6 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import com.example.gps_compas.BeepManager
 import com.example.gps_compas.FirestoreManager
 import com.example.gps_compas.ReferencePoint
 import com.example.gps_compas.askUserName
