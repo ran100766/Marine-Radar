@@ -5,18 +5,14 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.location.Location
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.PowerManager
-import android.provider.Settings
 import android.view.MotionEvent
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.ImageView
-import com.google.firebase.FirebaseApp
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.Toast
@@ -161,8 +157,6 @@ class MainActivity : AppCompatActivity() {
         tvLatitude = findViewById(R.id.tvLatitude)
         tvLongitude = findViewById(R.id.tvLongitude)
 
-        FirebaseApp.initializeApp(this)
-
         if (false)
         {
 // Save name
@@ -182,8 +176,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         locationPermissionRequest.launch(locationPermissions)
-        requestIgnoreBatteryOptimizations()
-
 
         val scrollView = findViewById<ScrollView>(R.id.scrollView)
         val pointsContainer = findViewById<LinearLayout>(R.id.pointsContainer)
@@ -255,19 +247,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun requestIgnoreBatteryOptimizations() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
-            val packageName = packageName
-
-            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-                val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-                intent.data = Uri.parse("package:$packageName")
-                startActivity(intent)
-            }
-        }
-    }
-    private var windNotActive = true  // global or class-level variable
+    private var windActive = true  // global or class-level variable
 
     private fun getWindPress(compassCircle: ImageView) {
 
@@ -275,10 +255,10 @@ class MainActivity : AppCompatActivity() {
 
             if (event.action == MotionEvent.ACTION_DOWN) {
 
-                if (!windNotActive) {
+                if (!windActive) {
                     windDirection = -1f
                     // Skip this press
-                    windNotActive = true  // flip for next press
+                    windActive = true  // flip for next press
                     return@setOnTouchListener true
                 }
 
@@ -295,7 +275,7 @@ class MainActivity : AppCompatActivity() {
 
                     Toast.makeText(this, "Direction saved: $smoothedAzimuth°", Toast.LENGTH_SHORT).show()
 
-                    windNotActive = false  // next press will skip
+                    windActive = false  // next press will skip
                     return@setOnTouchListener true
                 }
             }
