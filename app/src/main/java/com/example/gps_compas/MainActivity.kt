@@ -21,7 +21,6 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import com.example.gps_compas.FirestoreManager
 import com.example.gps_compas.ReferencePoint
 import com.example.gps_compas.askUserName
 import com.example.gps_compas.showCompasArrow
@@ -70,9 +69,19 @@ class MainActivity : AppCompatActivity() {
     )
 
     private var referencePoints: MutableList<ReferencePoint> = mutableListOf(
-//        ReferencePoint("Jerusalem", 31.7795, 35.2339),
-//        ReferencePoint("Home", 32.17062, 34.83878),
-//        ReferencePoint("Marina", 32.16580, 34.79267)
+        ReferencePoint("Jerusalem", 31.7795, 35.2339),
+        ReferencePoint("Home", 32.17062, 34.83878),
+
+        ReferencePoint("Marina_Nahariya", 33.012278, 35.089028),
+        ReferencePoint("Akko_Marina", 32.919944, 35.067778),
+        ReferencePoint("Haifa_Marina", 32.815639, 35.028361),
+        ReferencePoint("Marina_Herzliya", 32.165806, 34.792583),
+        ReferencePoint("Marina_Tel Aviv", 32.087778, 34.766667),
+        ReferencePoint("Jaffa_Port", 32.053083, 34.750222),
+        ReferencePoint("Marina_Ashdod", 31.826250, 34.637528),
+        ReferencePoint("Marina_Ashkelon", 31.682250, 34.555833),
+
+        ReferencePoint("Eilat_Marina", 29.545167, 34.960019)
     )
 
     private val locationPermissions = arrayOf(
@@ -198,19 +207,6 @@ class MainActivity : AppCompatActivity() {
         tvLatitude.text = "Lat: %.5f".format(location.latitude)
         tvLongitude.text = "Lng: %.5f".format(location.longitude)
 
-
-        val firestoreManager = FirestoreManager()
-
-        firestoreManager.readAllLocations { points ->
-            // This block runs after Firestore data is loaded
-            if (points.isNotEmpty()) {
-                // Assign to a variable for later use
-                referencePoints = points.toMutableList()
-
-                // Use referencePoints here, e.g., update UI or show on map
-            }
-        }
-
         fullLocationsList = referencePoints.map { point ->
             val (distance, bearing) = CalculateDistance.calculateDistanceAndBearing(
                 location.latitude,
@@ -271,7 +267,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    private var windActive = true  // global or class-level variable
+    private var windNotActive = true  // global or class-level variable
 
     private fun getWindPress(compassCircle: ImageView) {
 
@@ -279,10 +275,10 @@ class MainActivity : AppCompatActivity() {
 
             if (event.action == MotionEvent.ACTION_DOWN) {
 
-                if (!windActive) {
+                if (!windNotActive) {
                     windDirection = -1f
                     // Skip this press
-                    windActive = true  // flip for next press
+                    windNotActive = true  // flip for next press
                     return@setOnTouchListener true
                 }
 
@@ -299,7 +295,7 @@ class MainActivity : AppCompatActivity() {
 
                     Toast.makeText(this, "Direction saved: $smoothedAzimuth°", Toast.LENGTH_SHORT).show()
 
-                    windActive = false  // next press will skip
+                    windNotActive = false  // next press will skip
                     return@setOnTouchListener true
                 }
             }

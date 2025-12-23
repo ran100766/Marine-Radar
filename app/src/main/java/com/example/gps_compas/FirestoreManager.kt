@@ -1,4 +1,4 @@
-package com.example.gps_compas  // <-- use your actual package name
+package com.example.gps_compas
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
@@ -6,6 +6,7 @@ import com.google.firebase.Timestamp
 
 class FirestoreManager {
     private val db = FirebaseFirestore.getInstance()
+    private var isGroupJoined = false
 
     fun readAllLocations(onResult: (List<ReferencePoint>) -> Unit) {
         val db = FirebaseFirestore.getInstance()
@@ -48,7 +49,17 @@ class FirestoreManager {
             }
     }
 
+    private fun joinGroup() {
+        // In the future, you can add logic here to register the user in a group.
+        Log.d("Firestore", "User has joined the group.")
+    }
+
     fun writeLocation(point: ReferencePoint, onComplete: (Boolean) -> Unit) {
+        if (!isGroupJoined) {
+            joinGroup()
+            isGroupJoined = true
+        }
+
         val data = hashMapOf(
             "latitude" to point.lat,
             "longitude" to point.lon,
@@ -83,6 +94,4 @@ class FirestoreManager {
                 Log.w("Firestore", "Error deleting document", e)
             }
     }
-
-
 }

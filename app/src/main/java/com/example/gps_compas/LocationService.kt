@@ -13,15 +13,7 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
-import com.example.gps_compas.ReferencePoint
 import com.google.android.gms.location.*
-import com.google.firebase.firestore.FirebaseFirestore
-import com.example.gps_compas.FirestoreManager
-import com.example.gpscompass.CalculateDistance.calculateDistanceAndBearing
-import com.example.gpscompass.MainActivity.Companion.noName
-import com.example.gpscompass.MainActivity.Companion.userName
-import com.google.firebase.Timestamp
-import kotlin.math.abs
 
 class LocationService : Service() {
 
@@ -33,7 +25,6 @@ class LocationService : Service() {
     }
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
-    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate() {
         super.onCreate()
@@ -68,35 +59,11 @@ class LocationService : Service() {
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult) {
-
-            // ✅ Use only the latest location
             result.lastLocation?.let { location ->
-
-                val distance = calculateDistanceAndBearing(
-                    location.latitude,
-                    location.longitude,
-                    latestLocation.latitude,
-                    latestLocation.longitude
-                ).first
-
-                Log.d("DistanceCheck", "Distance: $distance meters")
-
-                if (/*abs(distance) > 2.0 && */userName != noName) {
-                    val myLocation = ReferencePoint(userName, location.latitude, location.longitude, Timestamp.now().toDate(),false,listOf<String>() )
-                    FirestoreManager().writeLocation(myLocation) { success ->
-                        if (success) Log.d("Main", "Location saved!")
-                    }
-                    Log.d(
-                        "Firestore",
-                        "Document write: $userName, Latitude: ${location.latitude}, Longitude: ${location.longitude}"
-                    )
-
-                }
                 latestLocation = location
             }
         }
     }
-
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
