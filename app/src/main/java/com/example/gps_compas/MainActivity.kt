@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.MotionEvent
+import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.ImageView
@@ -45,6 +46,7 @@ class MainActivity : AppCompatActivity() {
     public lateinit var tvDirection: TextView
     private lateinit var tvLatitude: TextView
     private lateinit var tvLongitude: TextView
+    private lateinit var addPointButton: Button
     private val uiUpdateHandler = Handler(Looper.getMainLooper())
 
 
@@ -71,6 +73,7 @@ class MainActivity : AppCompatActivity() {
     )
 
     private var referencePoints: MutableList<ReferencePoint> = getInitialReferencePoints()
+    private var nextPointChar = 'A'
 
     private val locationPermissions = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
@@ -148,6 +151,18 @@ class MainActivity : AppCompatActivity() {
         tvDirection = findViewById(R.id.tvDirection)
         tvLatitude = findViewById(R.id.tvLatitude)
         tvLongitude = findViewById(R.id.tvLongitude)
+        addPointButton = findViewById(R.id.addPointButton)
+
+        addPointButton.setOnClickListener {
+            val location = LocationService.latestLocation
+            if (location != null) {
+                val newPointName = nextPointChar.toString()
+                val newPoint = ReferencePoint(newPointName, location.latitude, location.longitude)
+                referencePoints.add(newPoint)
+                nextPointChar++
+                addPointButton.text = "Add Point $nextPointChar"
+            }
+        }
 
         if (false)
         {
