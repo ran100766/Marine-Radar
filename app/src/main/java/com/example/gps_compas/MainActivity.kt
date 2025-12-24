@@ -70,8 +70,8 @@ class MainActivity : AppCompatActivity() {
     )
 
     private var referencePoints: MutableList<ReferencePoint> = mutableListOf(
-        ReferencePoint("Jerusalem", 31.7795, 35.2339),
-        ReferencePoint("Home", 32.17062, 34.83878),
+//        ReferencePoint("Jerusalem", 31.7795, 35.2339),
+//        ReferencePoint("Home", 32.17062, 34.83878),
 
         ReferencePoint("Marina_Nahariya", 33.012278, 35.089028),
         ReferencePoint("Akko_Marina", 32.919944, 35.067778),
@@ -142,11 +142,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun startLocationService() {
         val serviceIntent = Intent(this, LocationService::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent)
-        } else {
-            startService(serviceIntent)
-        }
+        startService(serviceIntent)
+    }
+
+    private fun stopLocationService() {
+        val serviceIntent = Intent(this, LocationService::class.java)
+        stopService(serviceIntent)
     }
 
     var smoothedAzimuth = 0f
@@ -272,6 +273,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         compassManager.start()
+        startLocationService()
 
 //        updateJob = lifecycleScope.launch {
 //            while (isActive) {
@@ -284,6 +286,7 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         compassManager.stop()
+        stopLocationService()
 //        updateJob?.cancel()
 
     }

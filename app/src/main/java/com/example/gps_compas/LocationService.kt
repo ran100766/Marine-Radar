@@ -1,18 +1,13 @@
 package com.example.gpscompass
 
 import android.Manifest
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
-import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.*
 
 class LocationService : Service() {
@@ -39,9 +34,6 @@ class LocationService : Service() {
             .setMinUpdateIntervalMillis(5_000L) // don’t trigger faster than 5 sec
             .build()
 
-        createNotificationChannel()
-        startForeground(1, createNotification("Tracking location..."))
-
         startLocationUpdates()
     }
 
@@ -65,26 +57,6 @@ class LocationService : Service() {
         }
     }
 
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                "location_channel",
-                "Location Tracking",
-                NotificationManager.IMPORTANCE_LOW
-            )
-            val manager = getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(channel)
-        }
-    }
-
-    private fun createNotification(text: String): Notification {
-        return NotificationCompat.Builder(this, "location_channel")
-            .setContentTitle("GPS Compass")
-            .setContentText(text)
-            .setSmallIcon(android.R.drawable.ic_menu_mylocation)
-            .build()
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         fusedLocationClient.removeLocationUpdates(locationCallback)
@@ -98,9 +70,6 @@ class LocationService : Service() {
 
         // Stop location updates
         fusedLocationClient.removeLocationUpdates(locationCallback)
-
-        // Stop foreground service
-        stopForeground(true)
         stopSelf()
     }
 
