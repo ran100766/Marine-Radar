@@ -17,6 +17,7 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import com.example.gps_compas.ReferencePoint
 import com.example.gps_compas.askUserName
 import com.example.gps_compas.getInitialReferencePoints
@@ -47,6 +48,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvLatitude: TextView
     private lateinit var tvLongitude: TextView
     private lateinit var addPointButton: Button
+    private lateinit var clearPointsButton: Button
     private val uiUpdateHandler = Handler(Looper.getMainLooper())
 
 
@@ -152,6 +154,7 @@ class MainActivity : AppCompatActivity() {
         tvLatitude = findViewById(R.id.tvLatitude)
         tvLongitude = findViewById(R.id.tvLongitude)
         addPointButton = findViewById(R.id.addPointButton)
+        clearPointsButton = findViewById(R.id.clearPointsButton)
 
         addPointButton.setOnClickListener {
             val location = LocationService.latestLocation
@@ -162,6 +165,12 @@ class MainActivity : AppCompatActivity() {
                 nextPointChar++
                 addPointButton.text = "Add Point $nextPointChar"
             }
+        }
+
+        clearPointsButton.setOnClickListener {
+            referencePoints = getInitialReferencePoints()
+            nextPointChar = 'A'
+            addPointButton.text = "Add Point $nextPointChar"
         }
 
         if (false)

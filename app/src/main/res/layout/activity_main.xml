@@ -150,16 +150,23 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
             <Button
                 android:id="@+id/addPointButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Add Point A"
-                android:backgroundTint="#2E7D32"
+                android:backgroundTint="#4CAF50"
                 app:layout_constraintBottom_toTopOf="@id/scrollView"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
+
+            <Button
+                android:id="@+id/clearPointsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Clear Points"
+                android:backgroundTint="#F44336"
+                app:layout_constraintBottom_toTopOf="@id/scrollView"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <!-- ScrollView fixed height at bottom -->
             <ScrollView
