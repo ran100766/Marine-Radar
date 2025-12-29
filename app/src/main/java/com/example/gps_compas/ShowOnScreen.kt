@@ -33,7 +33,7 @@ fun showCompasArrow(
     // Update direction text
 //    tvDirection.text = "Course: %.0f°".format(normalizedAzimuth)
 
-    if (MainActivity.windNoneActive) {
+    if (MainActivity.windState == MainActivity.WindState.OFF) {
         tvDirection.text = "Course: %.0f°".format(normalizedAzimuth)
     } else {
         tvDirection.text = "Course: %.0f° Wind: %.0f°".format(normalizedAzimuth, MainActivity.angleToWind)

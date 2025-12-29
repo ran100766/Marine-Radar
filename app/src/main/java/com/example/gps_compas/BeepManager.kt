@@ -14,9 +14,9 @@ object BeepManager {
 
         CoroutineScope(Dispatchers.Default).launch {
             val toneGen = ToneGenerator(AudioManager.STREAM_ALARM, 100)
-            repeat(3) { // 3 beeps
+            repeat(1) { // 3 beeps
                 toneGen.startTone(ToneGenerator.TONE_PROP_BEEP, 200)
-                delay(1000) // pause between beeps
+                delay(300) // pause between beeps
             }
             toneGen.release()
             isBeeping = false

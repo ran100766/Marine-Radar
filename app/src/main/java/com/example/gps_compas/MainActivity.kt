@@ -30,13 +30,20 @@ import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
 
+    enum class WindState {
+        OFF,
+        ON,
+        BEEP
+    }
+
     companion object {
         val noName = "No_Name"
         var userName: String = noName
         var windDirection = -1f
         var angleToWind = -1f
 
-        var windNoneActive = true  // global or class-level variable
+        var windState = WindState.OFF
+
     }
 
     private lateinit var compassManager: CompassManager
@@ -265,19 +272,11 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-
     private fun getWindPress(compassCircle: ImageView) {
 
         compassCircle.setOnTouchListener { v, event ->
 
             if (event.action == MotionEvent.ACTION_DOWN) {
-
-                if (!windNoneActive) {
-                    windDirection = -1f
-                    // Skip this press
-                    windNoneActive = true  // flip for next press
-                    return@setOnTouchListener true
-                }
 
                 // Calculate tap distance from center
                 val cx = v.width / 2f
@@ -286,13 +285,34 @@ class MainActivity : AppCompatActivity() {
                 val dy = event.y - cy
                 val distance = kotlin.math.sqrt(dx * dx + dy * dy)
 
-                if (distance < 80f) {
-                    // SAVE THE CURRENT COMPASS DIRECTION
-                    windDirection = smoothedAzimuth
+                if (distance < 80f) { // only process taps inside the circle
 
-                    Toast.makeText(this, "Direction saved: $smoothedAzimuth°", Toast.LENGTH_SHORT).show()
+                    // Cycle state machine: OFF -> ON -> BEEP -> OFF ...
+                    windState = when (windState) {
+                        WindState.OFF -> WindState.ON
+                        WindState.ON -> WindState.BEEP
+                        WindState.BEEP -> WindState.OFF
+                    }
 
-                    windNoneActive = false  // next press will skip
+                    when (windState) {
+                        WindState.ON -> {
+                            // Save wind direction
+                            windDirection = smoothedAzimuth
+                            Toast.makeText(this, "Wind direction saved: ${windDirection.toInt()}°", Toast.LENGTH_SHORT).show()
+                        }
+                        WindState.BEEP -> {
+                            // Save angle to wind
+                            angleToWind = smoothedAzimuth
+                            Toast.makeText(this, "Angle to wind saved: ${angleToWind.toInt()}°", Toast.LENGTH_SHORT).show()
+                        }
+                        WindState.OFF -> {
+                            // Reset values
+                            windDirection = -1f
+                            angleToWind = -1f
+                            Toast.makeText(this, "Wind settings cleared", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
                     return@setOnTouchListener true
                 }
             }
@@ -300,6 +320,7 @@ class MainActivity : AppCompatActivity() {
             false
         }
     }
+
 
 }
 

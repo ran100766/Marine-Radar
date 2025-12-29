@@ -73,8 +73,10 @@ object ShowWind {
             )
         }
 
-        if (angleToWind > 170f || angleToWind < 10f) {
-            BeepManager.beepSeries()
+        if (MainActivity.windState == MainActivity.WindState.BEEP) {
+            if (angleToWind > 170f || angleToWind < 10f) {
+                BeepManager.beepSeries()
+            }
         }
     }
 
