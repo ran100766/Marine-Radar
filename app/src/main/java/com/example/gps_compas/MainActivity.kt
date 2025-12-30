@@ -2,6 +2,7 @@ package com.example.gpscompass
 
 import CompassManager
 import android.Manifest
+import android.app.Dialog
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
@@ -16,7 +17,6 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import com.example.gps_compas.ReferencePoint
 import com.example.gps_compas.ShowWind
 import com.example.gps_compas.askUserName
@@ -25,6 +25,7 @@ import com.example.gps_compas.showCompasArrow
 import com.example.gps_compas.showPointsOnCompas
 import com.example.gps_compas.showPointsOnList
 import com.example.gps_compas.updateVisibleLines
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -181,11 +182,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         tvFooter.setOnClickListener {
-            AlertDialog.Builder(this)
-                .setTitle("Developer Info")
-                .setMessage("ran100766@gmail.com")
-                .setPositiveButton("OK", null)
-                .show()
+            val dialog = Dialog(this)
+            dialog.setContentView(R.layout.dialog_developer_info)
+            dialog.show()
         }
 
         if (false)
