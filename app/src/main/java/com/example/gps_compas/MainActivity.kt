@@ -4,7 +4,6 @@ import CompassManager
 import android.Manifest
 import android.content.Intent
 import android.location.Location
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -19,14 +18,13 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import com.example.gps_compas.ReferencePoint
+import com.example.gps_compas.ShowWind
 import com.example.gps_compas.askUserName
 import com.example.gps_compas.getInitialReferencePoints
 import com.example.gps_compas.showCompasArrow
 import com.example.gps_compas.showPointsOnCompas
 import com.example.gps_compas.showPointsOnList
-import com.example.gps_compas.ShowWind
 import com.example.gps_compas.updateVisibleLines
-import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -56,6 +54,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvLongitude: TextView
     private lateinit var addPointButton: Button
     private lateinit var clearPointsButton: Button
+    private lateinit var tvFooter: TextView
     private val uiUpdateHandler = Handler(Looper.getMainLooper())
 
 
@@ -162,6 +161,7 @@ class MainActivity : AppCompatActivity() {
         tvLongitude = findViewById(R.id.tvLongitude)
         addPointButton = findViewById(R.id.addPointButton)
         clearPointsButton = findViewById(R.id.clearPointsButton)
+        tvFooter = findViewById(R.id.tvFooter)
 
         addPointButton.setOnClickListener {
             val location = LocationService.latestLocation
@@ -178,6 +178,14 @@ class MainActivity : AppCompatActivity() {
             referencePoints = getInitialReferencePoints()
             nextPointChar = 'A'
             addPointButton.text = "Add Point $nextPointChar"
+        }
+
+        tvFooter.setOnClickListener {
+            AlertDialog.Builder(this)
+                .setTitle("Developer Info")
+                .setMessage("ran100766@gmail.com")
+                .setPositiveButton("OK", null)
+                .show()
         }
 
         if (false)
@@ -242,34 +250,24 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        uiUpdateHandler.post(uiUpdateRunnable) // start periodic updates
+        uiUpdateHandler.post(uiUpdateRunnable)
     }
 
     override fun onStop() {
         super.onStop()
-        uiUpdateHandler.removeCallbacks(uiUpdateRunnable) // stop updates when activity stops
+        uiUpdateHandler.removeCallbacks(uiUpdateRunnable)
     }
-//    private var updateJob: Job? = null
 
     override fun onResume() {
         super.onResume()
         compassManager.start()
         startLocationService()
-
-//        updateJob = lifecycleScope.launch {
-//            while (isActive) {
-//                showPointsOnCompas(this@MainActivity, fullLocationsList)
-//                delay(500)
-//            }
-//        }
     }
 
     override fun onPause() {
         super.onPause()
         compassManager.stop()
         stopLocationService()
-//        updateJob?.cancel()
-
     }
 
     private fun getWindPress(compassCircle: ImageView) {
@@ -278,7 +276,6 @@ class MainActivity : AppCompatActivity() {
 
             if (event.action == MotionEvent.ACTION_DOWN) {
 
-                // Calculate tap distance from center
                 val cx = v.width / 2f
                 val cy = v.height / 2f
                 val dx = event.x - cx
@@ -287,7 +284,6 @@ class MainActivity : AppCompatActivity() {
 
                 if (distance < 80f) { // only process taps inside the circle
 
-                    // Cycle state machine: OFF -> ON -> BEEP -> OFF ...
                     windState = when (windState) {
                         WindState.OFF -> WindState.ON
                         WindState.ON -> WindState.BEEP
@@ -296,17 +292,14 @@ class MainActivity : AppCompatActivity() {
 
                     when (windState) {
                         WindState.ON -> {
-                            // Save wind direction
                             windDirection = smoothedAzimuth
                             Toast.makeText(this, "Wind direction saved: ${windDirection.toInt()}°", Toast.LENGTH_SHORT).show()
                         }
                         WindState.BEEP -> {
-                            // Save angle to wind
                             angleToWind = smoothedAzimuth
                             Toast.makeText(this, "Angle to wind saved: ${angleToWind.toInt()}°", Toast.LENGTH_SHORT).show()
                         }
                         WindState.OFF -> {
-                            // Reset values
                             windDirection = -1f
                             angleToWind = -1f
                             Toast.makeText(this, "Wind settings cleared", Toast.LENGTH_SHORT).show()
@@ -320,7 +313,4 @@ class MainActivity : AppCompatActivity() {
             false
         }
     }
-
-
 }
-
