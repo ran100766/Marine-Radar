@@ -184,6 +184,10 @@ class MainActivity : AppCompatActivity() {
         tvFooter.setOnClickListener {
             val dialog = Dialog(this)
             dialog.setContentView(R.layout.dialog_developer_info)
+            val btnOk = dialog.findViewById<Button>(R.id.btnOk)
+            btnOk.setOnClickListener {
+                dialog.dismiss()
+            }
             dialog.show()
         }
 
