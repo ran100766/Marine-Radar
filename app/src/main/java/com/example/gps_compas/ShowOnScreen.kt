@@ -33,11 +33,18 @@ fun showCompasArrow(
     // Update direction text
 //    tvDirection.text = "Course: %.0f°".format(normalizedAzimuth)
 
-    if (MainActivity.windState == MainActivity.WindState.OFF) {
-        tvDirection.text = "Course: %.0f°".format(normalizedAzimuth)
-    } else {
-        tvDirection.text = "Course: %.0f° Wind: %.0f°".format(normalizedAzimuth, MainActivity.angleToWind)
+    var courseString = "Course:%.0f° ".format(normalizedAzimuth)
+    var windString = "Wind:%.0f°".format(MainActivity.angleToWind)
+    val bell = "🔔"
+    var stringToShow = ""
+
+
+    when (MainActivity.windState) {
+        MainActivity.WindState.OFF  -> stringToShow = courseString + "Wind: Off "
+        MainActivity.WindState.ON   -> stringToShow = courseString + windString + " "
+        MainActivity.WindState.BEEP -> stringToShow = courseString + windString + bell
     }
+    tvDirection.text = stringToShow
 
 
 
