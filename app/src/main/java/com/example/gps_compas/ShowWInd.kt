@@ -62,7 +62,7 @@ object ShowWind {
         compassView.post {
             val centerX = compassView.x + compassView.width / 2
             val centerY = compassView.y + compassView.height / 2
-            val radius = compassView.width / 2f - 40f
+            val radius = compassView.width / 2f - 100f
 
             ShowWind.placeWindIcon(
                 pointerContainer,
